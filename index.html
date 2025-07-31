@@ -4,275 +4,122 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SOAP形式 薬歴作成支援ツール</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Noto Sans JP', sans-serif;
-            background-color: #1A202C; /* Dark Blue-Gray */
-            color: #E2E8F0; /* Lighter Gray */
-            line-height: 1.7;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            min-height: 100vh;
-            margin: 0;
-            padding: 20px;
+        body { 
+            font-family: sans-serif; 
+            margin: 10px;
         }
-        .container {
-            max-width: 800px;
-            width: 100%;
-            background-color: #2D3748; /* Slightly Lighter Blue-Gray */
-            padding: 40px;
-            border-radius: 8px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            border: 1px solid #4A5568; /* Softer Border */
+        h1, h2 {
+            font-size: 1.2em;
+            border-bottom: 1px solid #ccc;
+            margin-top: 20px;
         }
-        h1 {
-            text-align: center;
-            color: #63B3ED; /* Bright Blue */
-            font-weight: 700;
-            margin-bottom: 20px;
-            letter-spacing: 1.5px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        .icon {
-            width: 32px;
-            height: 32px;
-            margin: 0 10px;
-        }
-        .disease-selector {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        .disease-btn {
-            background-color: transparent;
-            color: #63B3ED;
-            border: 1px solid #63B3ED;
-            border-radius: 20px;
-            padding: 8px 20px;
-            font-size: 15px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s;
-            margin: 0 5px; /* Adjusted margin for more buttons */
-        }
-        .disease-btn.active, .disease-btn:hover {
-            background-color: #63B3ED;
-            color: #1A202C;
-            box-shadow: 0 0 15px rgba(99, 179, 237, 0.3);
+        textarea, input[type="text"] {
+            width: 98%;
+            font-size: 1em;
+            margin-top: 5px;
         }
         .form-group {
-            margin-bottom: 25px;
+            margin-bottom: 15px;
         }
-        label {
-            display: flex;
-            align-items: center;
-            font-weight: 700;
-            margin-bottom: 12px;
-            color: #CBD5E0; /* Light Gray for Labels */
-            font-size: 18px;
-        }
-        .label-symbol {
-            color: #63B3ED;
-            font-weight: 700;
-            margin-right: 12px;
-            font-size: 20px;
-        }
-        input[type="text"], textarea {
-            width: 100%;
-            padding: 15px;
-            border: 1px solid #4A5568;
-            border-radius: 5px;
-            font-size: 16px;
-            box-sizing: border-box;
-            transition: all 0.3s;
-            background-color: #1A202C;
-            color: #E2E8F0;
-            font-family: 'Noto Sans JP', sans-serif;
-        }
-        input[type="text"]:focus, textarea:focus {
-            outline: none;
-            border-color: #63B3ED;
-            box-shadow: 0 0 8px rgba(99, 179, 237, 0.2);
-        }
-        textarea {
-            resize: vertical;
-            min-height: 100px;
-        }
-        .btn {
-            display: block;
-            width: 100%;
-            padding: 15px;
-            background-color: #63B3ED;
-            color: #1A202C;
-            border: none;
-            border-radius: 5px;
-            font-size: 18px;
-            font-weight: 700;
+        .disease-selector button, .quick-btn, .btn, .copy-btn {
+            font-size: 1em;
+            margin: 2px;
+            padding: 5px;
+            border: 1px solid #000;
+            background: #eee;
             cursor: pointer;
-            transition: all 0.3s;
-            margin-top: 30px;
-            letter-spacing: 1px;
         }
-        .btn:hover {
-            background-color: #90CDF4; /* Lighter Blue on hover */
-            box-shadow: 0 4px 15px rgba(99, 179, 237, 0.2);
-        }
-        .output-area {
-            margin-top: 40px;
-        }
-        h2 {
-            color: #63B3ED;
-            border-bottom: 1px solid #4A5568;
-            padding-bottom: 10px;
-            margin-bottom: 20px;
-            font-weight: 700;
-        }
-        #soap-output {
-            background-color: #1A202C;
-            border: 1px solid #4A5568;
-            border-radius: 5px;
-            padding: 20px;
-            min-height: 200px;
-            white-space: pre-wrap;
-            font-size: 16px;
-            line-height: 1.8;
-            color: #E2E8F0;
-        }
-        .copy-btn {
-            display: block;
-            width: auto;
-            padding: 6px 15px;
-            background-color: #4A5568;
-            color: #E2E8F0;
-            border: 1px solid #63B3ED;
-            border-radius: 5px;
-            font-size: 14px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s;
-            margin-top: 10px;
-            float: right;
-        }
-        .copy-btn:hover {
-            background-color: #63B3ED;
-            color: #1A202C;
+        .disease-selector .active {
+            background: #000;
+            color: #fff;
         }
         .quick-btn-area {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-top: 10px;
-            min-height: 30px;
+            margin-top: 5px;
         }
-        .quick-btn {
-            background-color: #4A5568;
-            color: #E2E8F0;
-            border: 1px solid #718096;
-            border-radius: 15px;
-            padding: 5px 12px;
-            font-size: 13px;
-            font-weight: 400;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .quick-btn:hover {
-            background-color: #63B3ED;
-            border-color: #63B3ED;
-            color: #1A202C;
+        #soap-output {
+            white-space: pre-wrap;
+            background: #f4f4f4;
+            border: 1px solid #ccc;
+            padding: 10px;
+            min-height: 150px;
         }
     </style>
 </head>
 <body>
 
-    <div class="container">
-                <h1>
-            <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="#63B3ED">
-                <path d="M471.1 21C453.2 7.7 429.4 0 402.4 0C338.4 0 288 50.4 288 114.4C288 125.1 289.7 135.6 292.8 145.5L124.2 314.1C114.2 311 103.7 309.3 93.6 309.3C42 309.3 0 351.3 0 402.9C0 433.4 11.3 460.9 30 480.3L141.7 368.6C141.7 368.6 141.7 368.6 141.7 368.6C141.7 368.6 141.7 368.6 141.7 368.6L240.5 269.7L386.5 123.7C396.4 126.8 406.9 128.5 417.6 128.5C469.2 128.5 511.2 86.5 511.2 34.9C511.2 29.6 510.9 24.4 510.3 19.3L471.1 21zM402.4 32C419.9 32 435.1 39.4 445.1 51.1L405.2 91.1C393.4 81.1 386.4 65.9 386.4 48.4C386.4 39.6 393.6 32.4 402.4 32zM102.9 480C85.4 480 70.2 472.6 60.2 460.9L100.1 420.9C111.9 430.9 118.9 446.1 118.9 463.6C118.9 472.4 111.7 479.6 102.9 480z"/>
-            </svg>
-            SOAP形式 薬歴作成支援ツール
-            <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" fill="#63B3ED">
-                <path d="M153.6 0C162.5 0 170.7 3.1 176.8 9.2L247.2 79.5C253.3 85.6 256.4 93.9 256.4 102.7L256.4 128.1L369.9 128.1C378.7 128.1 384.4 134.2 384.4 142.6L384.4 178.3C384.4 186.7 378.7 192.8 369.9 192.8L256.4 192.8L256.4 288.1L369.9 288.1C378.7 288.1 384.4 294.2 384.4 302.6L384.4 338.3C384.4 346.7 378.7 352.8 369.9 352.8L256.4 352.8L256.4 409.7C256.4 466.5 209.8 512.8 152.8 512.8C95.8 512.8 49.2 466.5 49.2 409.7L49.2 102.7C49.2 45.9 95.8 0 152.8 0L153.6 0zM153.6 48.4C121.1 48.4 97.2 72.1 97.2 104.3L97.2 408.3C97.2 440.5 121.1 464.4 153.6 464.4C186.1 464.4 210 440.5 210 408.3L210 104.3C210 72.1 186.1 48.4 153.6 48.4z"/>
-            </svg>
-        </h1>
+    <h1>SOAP形式 薬歴作成支援ツール</h1>
 
-        <div class="disease-selector">
-            <button class="disease-btn active" data-disease="cold">風邪</button>
-            <button class="disease-btn" data-disease="hypertension">高血圧</button>
-            <button class="disease-btn" data-disease="diabetes">糖尿病</button>
-            <button class="disease-btn" data-disease="dyslipidemia">脂質異常症</button>
-            <button class="disease-btn" data-disease="arrhythmia">不整脈</button>
-        </div>
-
-        <div class="form-group">
-            <label for="symptoms"><span class="label-symbol">S</span>患者の症状 (Subjective)</label>
-            <textarea id="symptoms" placeholder="例: 3日前から咳と鼻水が続く。熱はない。"></textarea>
-            <div class="quick-btn-area" id="symptoms-btns"></div>
-        </div>
-
-        <div class="form-group">
-            <label for="objective"><span class="label-symbol">O</span>客観的所見 (Objective)</label>
-            <textarea id="objective" placeholder="例: 来局時、やや疲れた様子。バイタルサインは安定。"></textarea>
-            <div class="quick-btn-area" id="objective-btns"></div>
-        </div>
-
-        <div class="form-group">
-            <label for="assessment"><span class="label-symbol">A</span>評価 (Assessment)</label>
-            <textarea id="assessment" placeholder="例: 風邪の初期症状と思われる。処方された薬剤は症状に適していると判断。"></textarea>
-            <div class="quick-btn-area" id="assessment-btns"></div>
-        </div>
-
-        <div class="form-group">
-            <label for="medication"><span class="label-symbol">P</span>処方薬・指導 (Plan)</label>
-            <input type="text" id="medication" placeholder="例: PL配合顆粒 3g/包 毎食後 3日分"> 
-            <textarea id="plan_details" placeholder="その他の指導内容をここに入力します。例: 眠気が出ることがあるため、運転は控えるよう指導。"></textarea>
-            <div class="quick-btn-area" id="plan_details-btns"></div>
-        </div>
-
-        <button id="generateBtn" class="btn">SOAP薬歴を生成</button>
-
-        <div class="output-area">
-            <h2>生成された薬歴 (SOAP)</h2>
-            <button id="copyBtn" class="copy-btn">テキストをコピー</button>
-            <pre id="soap-output">ここに入力内容に基づいたSOAP形式のテキストが生成されます。</pre>
-        </div>
+    <div class="disease-selector">
+        <button class="disease-btn active" data-disease="cold">風邪</button>
+        <button class="disease-btn" data-disease="hypertension">高血圧</button>
+        <button class="disease-btn" data-disease="diabetes">糖尿病</button>
+        <button class="disease-btn" data-disease="dyslipidemia">脂質異常症</button>
+        <button class="disease-btn" data-disease="arrhythmia">不整脈</button>
     </div>
+
+    <div class="form-group">
+        <label for="symptoms"><b>S) 患者の症状 (Subjective)</b></label><br>
+        <textarea id="symptoms" rows="4"></textarea>
+        <div class="quick-btn-area" id="symptoms-btns"></div>
+    </div>
+
+    <div class="form-group">
+        <label for="objective"><b>O) 客観的所見 (Objective)</b></label><br>
+        <textarea id="objective" rows="4"></textarea>
+        <div class="quick-btn-area" id="objective-btns"></div>
+    </div>
+
+    <div class="form-group">
+        <label for="assessment"><b>A) 評価 (Assessment)</b></label><br>
+        <textarea id="assessment" rows="4"></textarea>
+        <div class="quick-btn-area" id="assessment-btns"></div>
+    </div>
+
+    <div class="form-group">
+        <label for="medication"><b>P) 処方薬・指導 (Plan)</b></label><br>
+        <input type="text" id="medication" placeholder="処方薬を入力"><br>
+        <textarea id="plan_details" rows="4" placeholder="指導内容を入力"></textarea>
+        <div class="quick-btn-area" id="plan_details-btns"></div>
+    </div>
+
+    <button id="generateBtn" class="btn">SOAP薬歴を生成</button>
+
+    <h2>生成された薬歴 (SOAP)</h2>
+    <button id="copyBtn" class="copy-btn">テキストをコピー</button>
+    <pre id="soap-output">ここに入力内容に基づいたSOAP形式のテキストが生成されます。</pre>
 
     <script>
         const quickButtonData = {
             'cold': {
-                'symptoms': ['咳', '鼻水', '喉の痛み', '頭痛', '発熱', '倦怠感', '痰が絡む', '鼻づまり'],
-                'objective': ['来局時、元気な様子', '来局時、やや疲れた様子', '顔色良好', '声はクリア', '体温:___℃'],
-                'assessment': ['風邪の初期症状と思われる', '処方内容は症状に合致', '副作用は発現していない', 'アレルギー性の可能性も考慮'],
-                'plan_details': ['用法・用量を説明', '副作用について説明', '眠気が出ることがあるため、運転は控えるよう指導', '十分な休養と水分補給を推奨', 'お大事に']
+                'symptoms': ['咳', '痰', '鼻水', '鼻づまり', '喉の痛み', '発熱', '悪寒', '倦怠感', '頭痛', '関節痛'],
+                'objective': ['咽頭発赤あり', '鼻汁あり', '体温:___℃', '来局時、活気なし', '処方医に連絡し、状況報告'],
+                'assessment': ['感冒による症状と推測', '処方内容は対症療法として適切', '細菌感染の合併は現時点では否定的', '十分な休養と栄養補給が重要', '副作用発現なし'],
+                'plan_details': ['用法・用量を説明', '眠気、ふらつき等の副作用を説明', '症状が改善しない、または悪化する場合は再受診を推奨', '十分な水分補給と休養を指導', 'お大事に']
             },
             'hypertension': {
-                'symptoms': ['特に変わりない', '血圧は安定している', '時々頭痛がする', 'めまいを感じることがある', '飲み忘れなし', '薬を飲み忘れた', 'ストレスを感じている'],
-                'objective': ['BP:___/___mmHg', '脈拍:___bpm', '残薬なし', 'お薬手帳持参', '顔色良好'],
-                'assessment': ['血圧コントロール良好', '降圧目標を達成', '副作用の発現なし', '服薬アドヒアランス良好', '生活習慣の改善が必要'],
-                'plan_details': ['継続して服用するよう指導', '家庭での血圧測定を推奨', '減塩指導', '副作用（めまい、咳等）の確認', '次回の受診日を確認']
+                'symptoms': ['特に自覚症状なし', '頭痛', 'めまい', 'ふらつき', '家庭血圧は___/___mmHg前後', '服薬コンプライアンス良好', '塩分を控えている', '運動を心がけている'],
+                'objective': ['家庭血圧手帳を持参', '来局時血圧:___/___mmHg', '残薬なし', '副作用（咳、めまい、浮腫等）の訴えなし'],
+                'assessment': ['家庭血圧でのコントロール良好', '降圧目標（診察室/家庭）達成', '副作用なく、処方は適切と判断', '服薬アドヒアランス良好', '生活習慣の改善努力が見られる'],
+                'plan_details': ['継続服用とアドヒアランスの重要性を説明', '家庭での血圧測定と記録の継続を指導', '減塩・運動等の生活習慣の継続を推奨', '副作用の初期症状（めまい、咳、むくみ等）を再確認', '次回の受診予定を確認']
             },
             'diabetes': {
-                'symptoms': ['特に変わりない', '血糖値は安定', '手足のしびれはない', 'のどの渇きはない', '飲み忘れなし', '低血糖症状があった'],
-                'objective': ['HbA1c:___%', '血糖値:___mg/dL', '残薬なし', 'お薬手帳持参', '体重:___kg', '足のチェック異常なし'],
-                'assessment': ['血糖コントロール良好', '目標HbA1cを達成', '低血糖症状なし', '副作用の発現なし', '服薬アドヒアランス良好', 'シックデイについて理解'],
-                'plan_details': ['継続して服用するよう指導', '低血糖症状と対処法を再確認', '食事・運動療法の重要性を再確認', 'シックデイルールを説明', '次回の受診日を確認']
+                'symptoms': ['特に自覚症状なし', 'のどの渇き', '多尿', '体重の変化', '手足のしびれ・痛みはない', '低血糖症状（冷や汗、動悸、手の震え）なし', '食事療法を実践', '運動療法を実践'],
+                'objective': ['HbA1c:___%', '血糖値:___mg/dL', 'お薬手帳持参', '残薬なし', 'インスリン手技問題なし', 'フットケア実施状況良好'],
+                'assessment': ['血糖コントロール状態は目標範囲内', '低血糖のリスクは低い', '合併症（網膜症、腎症、神経障害）の兆候なし', 'シックデイルールを理解している', '服薬アドヒアランス良好'],
+                'plan_details': ['継続服用の重要性を説明', '低血糖症状の症状と対処法（ブドウ糖摂取）を再確認', 'シックデイルールの対応について再確認', '定期的な足の観察（フットケア）を指導', '次回の受診予定と検査予定を確認']
             },
             'dyslipidemia': {
-                'symptoms': ['特に変わりない', '食事に気をつけている', '運動を始めた', '飲み忘れなし', '筋肉痛や脱力感はない'],
-                'objective': ['LDL-C:___mg/dL', 'TG:___mg/dL', 'HDL-C:___mg/dL', '残薬なし', 'お薬手帳持参', 'CK値:___'],
-                'assessment': ['脂質コントロール良好', '目標値を達成', '副作用（筋肉痛等）の発現なし', '服薬アドヒアランス良好', '食事・運動療法の継続が重要'],
-                'plan_details': ['継続して服用するよう指導', '食事（脂質・糖質）について指導', '横紋筋融解症の初期症状を説明', '運動の継続を推奨', '次回の受診日を確認']
+                'symptoms': ['特に自覚症状なし', '食事内容に注意している', '定期的に運動している', '筋肉痛、脱力感、こわばり等の症状なし', '服薬コンプライアンス良好'],
+                'objective': ['LDL-C:___mg/dL', 'TG:___mg/dL', 'HDL-C:___mg/dL', 'CK値異常なし', '残薬なし'],
+                'assessment': ['脂質管理目標値を達成', '副作用（横紋筋融解症等）の兆候なし', '処方は適切と判断', '服薬アドヒアランス良好', '生活習慣改善の意識が高い'],
+                'plan_details': ['継続服用の重要性を説明', '横紋筋融解症の初期症状（筋肉痛、脱力感、赤褐色尿等）を再確認し、発現時はすぐに相談するよう指導', '食事・運動療法の継続を推奨', 'グレープフルーツジュースとの相互作用について説明', '次回の受診予定を確認']
             },
             'arrhythmia': {
-                'symptoms': ['動悸がする', '胸が苦しい', 'めまい', '特に変わりない', '飲み忘れなし', '息切れを感じる'],
-                'objective': ['脈拍: ___ bpm (整/不整)', '来局時、落ち着いた様子', '残薬なし', 'お薬手帳持参', 'ワーファリンPT-INR:___'],
-                'assessment': ['脈拍コントロール良好', '自覚症状なし', '副作用の発現なし', '服薬アドヒアランス良好', '出血傾向に注意が必要'],
-                'plan_details': ['継続して服用するよう指導', '動悸やめまいがあれば相談するよう指導', '不正脈のセルフチェック方法を説明', '納豆・クロレラ等の摂取について注意喚起', '次回の受診日を確認']
+                'symptoms': ['動悸', '息切れ', 'めまい', '胸部不快感', '特に自覚症状なし', '出血傾向（鼻血、歯肉出血、皮下出血）なし', '服薬コンプライアンス良好'],
+                'objective': ['脈拍:___bpm(整/不整)', 'PT-INR:___(ワルファリン服用時)', 'DOAC服用中のためモニタリング項目なし', '残薬なし', 'お薬手帳で併用薬確認'],
+                'assessment': ['心拍数はおおむね目標範囲内', '脳梗塞のリスク管理は良好', '重大な出血事象のリスクは低い', '副作用（出血、消化器症状等）なし', '服薬アドヒアランス良好'],
+                'plan_details': ['抗凝固薬の継続服用の重要性を説明', '出血傾向（鼻血、歯肉出血、あざ等）に注意し、持続する場合は受診するよう指導', '併用薬（特にNSAIDs、抗血小板薬）について注意喚起', '納豆、クロレラ、青汁など食事との相互作用を再確認（ワルファリン）', '次回の受진予定を確認']
             }
         };
 
@@ -286,7 +133,7 @@
 
             for (const [key, btnAreaId] of Object.entries(buttonMapping)) {
                 const area = document.getElementById(btnAreaId);
-                area.innerHTML = ''; // Clear existing buttons
+                area.innerHTML = '';
                 const buttons = quickButtonData[disease][key] || [];
                 buttons.forEach(text => {
                     const button = document.createElement('button');
@@ -307,7 +154,7 @@
             }
         });
 
-        document.querySelector('.container').addEventListener('click', function(e) {
+        document.querySelector('body').addEventListener('click', function(e) {
             if (e.target.classList.contains('quick-btn')) {
                 const targetId = e.target.dataset.target;
                 const textToAdd = e.target.textContent;
@@ -338,7 +185,6 @@
             }
             planText += '・患者の状態に変化があれば、再度相談するよう伝えた。';
 
-
             const soapNote = `S) ${symptoms || '（記載なし）'}\n\nO) ${objective || '（記載なし）'}\n\nA) ${assessment || '（記載なし）'}\n\nP) \n${planText}`;
 
             document.getElementById('soap-output').textContent = soapNote;
@@ -354,9 +200,7 @@
             });
         });
 
-        // Initialize with default selection
         updateQuickButtons('cold');
-
     </script>
 
 </body>
